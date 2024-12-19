@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - BITDOLAR</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #1e1e2f;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .dashboard {
+      display: flex;
+      height: 100vh;
+    }
+
+    /* Painel lateral */
+    .sidebar {
+      background-color: #2c2c3e;
+      width: 250px;
+      height: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      transition: transform 0.3s ease;
+      z-index: 1000;
+    }
+
+    .sidebar.hide {
+      transform: translateX(-100%);
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      background-color: #00d1b2;
+    }
+
+    .sidebar-header h3 {
+      font-size: 1.2rem;
+    }
+
+    .drag-handle {
+      cursor: pointer;
+      font-size: 1.5rem;
+    }
+
+    .sidebar-menu a {
+      display: block;
+      padding: 0.8rem 1rem;
+      color: #fff;
+      text-decoration: none;
+      margin-bottom: 10px;
+      transition: background 0.3s;
+    }
+
+    .sidebar-menu a:hover {
+      background-color: #00d1b2;
+    }
+
+    /* Conteúdo principal */
+    .main-content {
+      margin-left: 250px;
+      width: calc(100% - 250px);
+      padding: 2rem;
+      height: 100vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .main-content.hide-sidebar {
+      margin-left: 0;
+      width: 100%;
+    }
+
+    .content-header h2 {
+      color: #00d1b2;
+      margin-left: 20px; /* Adicionando margem para deslocar títulos verdes */
+    }
+
+    /* Copy e botão */
+    .robot-info {
+      background-color: #2c2c3e;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .robot-info h3 {
+      color: #00d1b2;
+      margin-bottom: 10px;
+      margin-left: 20px; /* Deslocamento para alinhar com os títulos */
+    }
+
+    .robot-info p {
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .robot-btn {
+      padding: 10px 20px;
+      background-color: #00d1b2;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+
+    .robot-btn:hover {
+      background-color: #009e8c;
+    }
+
+    .extra-buttons {
+      margin-top: 20px;
+      display: none;
+    }
+
+    .extra-buttons button {
+      padding: 10px 20px;
+      margin: 10px 5px;
+      background-color: #00d1b2;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+
+    .extra-buttons button:hover {
+      background-color: #009e8c;
+    }
+
+    .robot-img {
+      margin-top: 20px;
+      max-width: 300px;
+      height: auto;
+    }
+
+    .drag-handle-global {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      cursor: pointer;
+      font-size: 1.5rem;
+      color: #fff;
+      z-index: 1001;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Painel lateral -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h3>BITDOLAR</h3>
+        <span class="drag-handle" id="drag-handle">☰</span>
+      </div>
+      <div class="sidebar-menu">
+        <a href="#" data-target="dashboard">Dashboard</a>
+        <a href="#" data-target="robot">Robô de Rendimento</a>
+        <a href="#" data-target="crypto">Investir em Criptomoedas</a>
+        <a href="#" data-target="dollar">Investir em Dólar</a>
+        <a href="#" data-target="euro">Investir em Euro</a>
+        <a href="#" data-target="wallet">Minha Carteira</a>
+        <a href="#" data-target="settings">Configurações</a>
+        <a href="#" data-target="support">Suporte</a>
+      </div>
+    </div>
+
+    <!-- Conteúdo principal -->
+    <div class="main-content" id="main-content">
+      <div class="content-header">
+        <h2 id="content-title">Dashboard</h2>
+      </div>
+      <div class="content" id="content-area">
+        <p>Bem-vindo à sua plataforma de investimentos! Escolha uma das opções no painel lateral para começar.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botão de abrir painel global -->
+  <span class="drag-handle-global" id="drag-handle-global">☰</span>
+
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('main-content');
+    const dragHandleGlobal = document.getElementById('drag-handle-global');
+    const dragHandle = document.getElementById('drag-handle');
+    const contentTitle = document.getElementById('content-title');
+    const contentArea = document.getElementById('content-area');
+    const menuLinks = document.querySelectorAll('.sidebar-menu a');
+
+    // Função para abrir/fechar o painel lateral
+    const toggleSidebar = () => {
+      sidebar.classList.toggle('hide');
+      mainContent.classList.toggle('hide-sidebar');
+    };
+
+    dragHandleGlobal.addEventListener('click', toggleSidebar);
+    dragHandle.addEventListener('click', toggleSidebar);
+
+    // Conteúdos de cada seção
+    const contentData = {
+      dashboard: `<p>Bem-vindo ao painel principal da BITDOLAR! Monitore seus investimentos.</p>`,
+      robot: `
+        <div class="robot-info">
+          <h3>Robôs de Mineração Automática</h3>
+          <p>
+            Nossos robôs mineram <strong>Bitcoin</strong> e <strong>dólar</strong> automaticamente, 
+            garantindo <strong>200% de rendimento ao dia</strong>. 
+            Após a mineração, o valor depositado <strong>dobra 2x mais</strong>.
+            <br><br>
+            Depósitos e saques são <strong>instantâneos via Pix</strong>.
+          </p>
+          <button class="robot-btn" id="auto-rendiment">Rendimento Automático</button>
+          <div class="extra-buttons" id="extra-buttons">
+            <button onclick="window.location.href='https://go.pepper.com.br/fzd9b';">R$ 20</button>
+            <button onclick="window.location.href='https://seusite.com/rendimento50';">R$ 50</button>
+            <button onclick="window.location.href='https://seusite.com/rendimento100';">R$ 100</button>
+          </div>
+          <img src="./fancyai_1734550161669.png" alt="Robô de Rendimento" class="robot-img">
+        </div>
+      `,
+      crypto: `<p>Invista em criptomoedas e acompanhe os melhores rendimentos do mercado.</p>`,
+      dollar: `<p>Invista em dólar americano e maximize seus lucros com operações seguras.</p>`,
+      euro: `<p>Invista em euro com as melhores taxas e rentabilidade garantida.</p>`,
+      wallet: `<p>Gerencie seus fundos e visualize o saldo da sua carteira aqui.</p>`,
+      settings: `<p>Ajuste as configurações da sua conta conforme necessário.</p>`,
+      support: `<p>Entre em contato com nossa equipe de suporte para esclarecer dúvidas.</p>`
+    };
+
+    // Atualizar conteúdo ao clicar no menu
+    menuLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = link.getAttribute('data-target');
+        contentTitle.innerText = link.innerText;
+        contentArea.innerHTML = contentData[target];
+
+        // Adicionando funcionalidade de botão dinâmico
+        if (target === "robot") {
+          setTimeout(() => {
+            const autoRendiment = document.getElementById("auto-rendiment");
+            const extraButtons = document.getElementById("extra-buttons");
+            if (autoRendiment && extraButtons) {
+              autoRendiment.addEventListener("click", () => {
+                setTimeout(() => {
+                  extraButtons.style.display = "block";
+                }, 2000);
+              });
+            }
+          }, 100);
+        }
+
+        toggleSidebar();
+      });
+    });
+  </script>
+</body>
+</html>
